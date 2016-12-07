@@ -1,0 +1,107 @@
+package ese1_2;
+/**
+ * 
+ * @author Valerio Cietto
+ * LFT lab 2016-2017
+ * 
+ * task recognize a string like {0...9}{0,2,4,6,8}{A...K}
+ * Alphabet {0...9}&{A...z}
+ *
+ */
+public class IdentificatoriJava {
+	
+	public static boolean scan(String s){
+		int state = 0;
+		boolean pari = false;
+		boolean lettera_minore_di_k = false;
+		int i = 0;
+		
+		while (state >= 0 && i < s.length()){
+			final char ch = s.charAt(i++);
+			//System.out.println("analisi carattere");
+			//System.out.println("carattere "+ch);
+			//System.out.println("carattere is digit "+Character.isDigit(ch));
+			//System.out.println("carattere is letter "+Character.isLetter(ch));
+			
+			
+			switch (state) {
+				case 0:
+					if (Character.isDigit(ch)){
+						if(Integer.parseInt(""+ch) % 2 == 0){
+							pari = true;
+							
+						}
+						else{
+							
+							pari = false;
+						}
+						state = 1;
+					}
+					else
+						state = -1;
+					break;
+				
+				case 1:
+					if (Character.isLetter(ch)){
+						if((int)Character.toLowerCase(ch) >96 && (int)Character.toLowerCase(ch) <108){
+							
+							lettera_minore_di_k=true;
+						}
+						else{
+							
+							lettera_minore_di_k=false;
+						}
+						
+						state = 2;
+					}
+					else if(Character.isDigit(ch)){
+						if(Integer.parseInt(""+ch) % 2 == 0){
+							pari = true;
+						}
+						else{
+							pari = false;
+						}
+						state = 1;
+					}
+					else
+						state = -1;
+					break;
+					
+				case 2:
+					if (Character.isLetter(ch)){
+						
+						state = 2;
+					}
+					else
+						state = -1;
+					break;	
+				
+			}
+		}
+		if(lettera_minore_di_k&&pari&&state==2) return true;
+		if(!lettera_minore_di_k&&!pari&&state==2) return true;
+		return false;
+	}
+	public static void test(String s){
+		System.out.println("testing: "+s);
+		System.out.println(scan(s)? "OK":"NOPE");
+	}
+	
+	public static void main(String[] args) {
+		if(args.length>0){
+			System.out.println(scan(args[0])? "OK":"NOPE");
+		}
+		//OK
+		test("123456Bianchi");
+		test("654321Rossi");
+		test("2Bianchi");
+		test("122B");
+		//NOPE
+		test("654321Bianchi");
+		test("123456Rossi");
+		test("654322");
+		test("Rossi");
+
+	}
+
+}
